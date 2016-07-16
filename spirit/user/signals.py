@@ -13,9 +13,12 @@ User = get_user_model()
 def update_or_create_user_profile(sender, instance, created, **kwargs):
     user = instance
 
-    if created:
+    try:
+        if created:
+            UserProfile.objects.create(user=user)
+        else:
+            user.st.save()
+    except UserProfile.DoesNotExist:
         UserProfile.objects.create(user=user)
-    else:
-        user.st.save()
 
 post_save.connect(update_or_create_user_profile, sender=User, dispatch_uid=__name__)
